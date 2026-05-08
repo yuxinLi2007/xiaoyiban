@@ -1,0 +1,211 @@
+/* 医疗风格配色 */
+.page {
+  padding: 0 32rpx 40rpx;
+  background-color: #f0f5f3;
+  min-height: 100vh;
+}
+
+/* 顶部标题区 */
+.header {
+  padding: 48rpx 0 36rpx;
+  position: relative;
+}
+
+.add-btn {
+  position: absolute;
+  right: 0;
+  top: 52rpx;
+  background: linear-gradient(135deg, #1a6b54, #3d9b78);
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 500;
+  border-radius: 40rpx;
+  padding: 0 36rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  border: none;
+}
+
+.add-btn::after {
+  border: none;
+}
+
+.title {
+  font-size: 52rpx;
+  font-weight: 700;
+  color: #1a6b54;
+  display: block;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  color: #8aae9f;
+  margin-top: 8rpx;
+  display: block;
+}
+
+/* 空状态 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 240rpx;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #a0b8ad;
+}
+
+/* 卡片列表 */
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 36rpx;
+}
+
+/* 卡片 - 通用 */
+.card {
+  border-radius: 28rpx;
+  padding: 0;
+  box-shadow: 0 6rpx 32rpx rgba(26, 107, 84, 0.1);
+  overflow: hidden;
+  position: relative;
+  transition: background 0.3s ease, opacity 0.3s ease, border-left 0.3s ease;
+}
+
+.card:active {
+  opacity: 0.9;
+  transform: scale(0.985);
+}
+
+/* 未读卡片 - 淡绿背景 + 绿色左边框 */
+.card-new {
+  background: #f6ffed;
+  border-left: 6rpx solid #52c41a;
+}
+
+/* 已读卡片 - 灰色背景 */
+.card-read {
+  background: #f2f2f2;
+  opacity: 0.85;
+}
+
+/* 右上角红点 */
+.badge {
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: #ff4d4f;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* 红点淡出动画 */
+.badge-fade {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+/* 标题行 */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 36rpx 36rpx 24rpx;
+}
+
+.card-diagnosis-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  overflow: hidden;
+}
+
+.card-diagnosis {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1a6b54;
+}
+
+/* NEW 标签 */
+.new-tag {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: #ff4d4f;
+  background: rgba(255, 77, 79, 0.1);
+  border-radius: 8rpx;
+  padding: 2rpx 12rpx;
+  margin-left: 16rpx;
+  flex-shrink: 0;
+}
+
+/* 已读标签 */
+.read-tag {
+  font-size: 22rpx;
+  color: #999;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8rpx;
+  padding: 2rpx 12rpx;
+  margin-left: 16rpx;
+  flex-shrink: 0;
+}
+
+.card-time {
+  font-size: 26rpx;
+  color: #8aae9f;
+  flex-shrink: 0;
+}
+
+/* 分隔线 */
+.card-divider {
+  height: 1rpx;
+  background: linear-gradient(to right, #e8f0ec, #d4e4db, #e8f0ec);
+  margin: 0 36rpx;
+}
+
+/* 卡片内容 */
+.card-body {
+  padding: 24rpx 36rpx 20rpx;
+}
+
+.card-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 12rpx 0;
+}
+
+.card-label {
+  font-size: 30rpx;
+  color: #8aae9f;
+  min-width: 160rpx;
+  flex-shrink: 0;
+}
+
+.card-value {
+  font-size: 34rpx;
+  color: #3a5a4c;
+  line-height: 1.6;
+  flex: 1;
+}
+
+/* 卡片底部 */
+.card-footer {
+  padding: 16rpx 36rpx 28rpx;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.card-action {
+  font-size: 30rpx;
+  color: #3d9b78;
+  font-weight: 500;
+}

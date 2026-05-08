@@ -1,0 +1,96 @@
+<view class="page">
+
+  <!-- ====== 状态一：加载中 ====== -->
+  <view class="state-loading" wx:if="{{loading}}">
+    <view class="spinner"></view>
+    <text class="loading-text">正在加载就诊报告...</text>
+  </view>
+
+  <!-- ====== 状态二：错误 ====== -->
+  <view class="state-error" wx:elif="{{loadError}}">
+    <text class="error-icon">⚠</text>
+    <text class="error-title">{{loadError}}</text>
+    <text class="error-hint">请稍后重试，或返回列表重新打开</text>
+    <button class="btn-retry" bindtap="goBack">返回列表</button>
+  </view>
+
+  <!-- ====== 状态三：记录不存在 ====== -->
+  <view class="state-error" wx:elif="{{isEmpty}}">
+    <text class="error-icon">📄</text>
+    <text class="error-title">该记录不存在</text>
+    <text class="error-hint">可能已被删除或ID无效</text>
+    <button class="btn-retry" bindtap="goBack">返回列表</button>
+  </view>
+
+  <!-- ====== 状态四：正常内容 ====== -->
+  <block wx:else>
+
+    <!-- 诊断标题区 -->
+    <view class="diag-header">
+      <view class="diag-patient">{{report.elderName || report.name || '患者'}}</view>
+      <text class="diag-title">{{report.diagnosis || '暂无诊断信息'}}</text>
+      <text class="diag-time">{{report.date || ''}}</text>
+    </view>
+
+    <!-- 信息分块：医生 -->
+    <view class="section">
+      <view class="section-icon">👨‍⚕️</view>
+      <view class="section-content">
+        <text class="section-label">主治医生</text>
+        <text class="section-value">{{report.doctor || '-'}}</text>
+      </view>
+    </view>
+
+    <!-- 医院 -->
+    <view class="section">
+      <view class="section-icon">🏥</view>
+      <view class="section-content">
+        <text class="section-label">就诊医院</text>
+        <text class="section-value">{{report.hospital || '-'}}</text>
+      </view>
+    </view>
+
+    <!-- 科室 -->
+    <view class="section" wx:if="{{report.department}}">
+      <view class="section-icon">🏢</view>
+      <view class="section-content">
+        <text class="section-label">就诊科室</text>
+        <text class="section-value">{{report.department}}</text>
+      </view>
+    </view>
+
+    <!-- 用药 -->
+    <view class="section">
+      <view class="section-icon">💊</view>
+      <view class="section-content">
+        <text class="section-label">用药方案</text>
+        <text class="section-value">{{report.medicine || '暂无用药信息'}}</text>
+      </view>
+    </view>
+
+    <!-- 医嘱 -->
+    <view class="section">
+      <view class="section-icon">📝</view>
+      <view class="section-content">
+        <text class="section-label">医嘱建议</text>
+        <text class="section-value">{{report.advice || '遵医嘱'}}</text>
+      </view>
+    </view>
+
+    <!-- 就诊总结 -->
+    <view class="summary-card">
+      <view class="summary-header">
+        <text class="summary-icon">📋</text>
+        <text class="summary-title">就诊总结</text>
+      </view>
+      <text class="summary-text">{{summary || '暂无总结信息'}}</text>
+    </view>
+
+    <!-- 底部操作栏 -->
+    <view class="detail-footer">
+      <button class="btn-back" bindtap="goBack">返回记录列表</button>
+    </view>
+
+  </block>
+
+</view>

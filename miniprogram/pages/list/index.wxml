@@ -1,0 +1,80 @@
+<view class="page">
+
+  <!-- 顶部 Tab 筛选 -->
+  <scroll-view scroll-x class="tabs-scroll" enhanced show-scrollbar="{{false}}">
+    <view class="tabs-wrap">
+      <view
+        class="tab-item {{activeTab === item.key ? 'tab-active' : ''}}"
+        wx:for="{{tabs}}"
+        wx:key="key"
+        bindtap="onTabTap"
+        data-key="{{item.key}}">
+        {{item.label}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 列表 -->
+  <view class="record-list" wx:if="{{filteredRecords.length > 0}}">
+    <view
+      class="record-card {{item.isNew ? 'card-new' : ''}}"
+      wx:for="{{filteredRecords}}"
+      wx:key="_id"
+      bindtap="goDetail"
+      data-id="{{item._id}}">
+
+      <!-- 未读红点 -->
+      <view class="new-dot" wx:if="{{item.isNew}}"></view>
+
+      <!-- 未读左侧绿条 -->
+      <view class="new-bar" wx:if="{{item.isNew}}"></view>
+
+      <!-- 第一行：诊断 + 日期 -->
+      <view class="card-head">
+        <view class="head-left">
+          <text class="patient-name">{{item.elderName}}</text>
+          <text class="tag {{item.statusClass}}" wx:if="{{item.statusText}}">{{item.statusText}}</text>
+        </view>
+        <text class="card-date">{{item.date}}</text>
+      </view>
+
+      <!-- 诊断名称 -->
+      <view class="card-diagnosis">
+        <text class="diag-text">{{item.diagnosis}}</text>
+      </view>
+
+      <!-- 信息分层 -->
+      <view class="info-section">
+        <view class="info-item">
+          <text class="info-label">医院</text>
+          <text class="info-val">{{item.hospital}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">科室</text>
+          <text class="info-val">{{item.department || '-'}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">医生</text>
+          <text class="info-val">{{item.doctor}}</text>
+        </view>
+      </view>
+
+      <!-- 底部操作 -->
+      <view class="card-foot">
+        <view class="source-tag" wx:if="{{item.source}}">
+          <text>{{item.source === 'elder' ? '老人端录入' : '子女端录入'}}</text>
+        </view>
+        <text class="foot-link">查看详情 ›</text>
+      </view>
+
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-box" wx:if="{{!filteredRecords.length}}">
+    <text class="empty-icon-text">📋</text>
+    <text class="empty-title">暂无就诊记录</text>
+    <text class="empty-hint">就诊记录会在这里展示</text>
+  </view>
+
+</view>

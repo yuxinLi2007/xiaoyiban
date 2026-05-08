@@ -1,0 +1,263 @@
+/* ========== 全局变量 ========= */
+page {
+  background: #F5F7FA;
+}
+
+.page {
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+/* ========== 颜色变量引用 ========= */
+/* 主色 #1A9E75 | 辅助蓝 #2B7FDD | 背景 #F5F7FA | 红 #FF4D4F */
+
+/* ====== 第一层：loading ====== */
+.state-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+}
+.spinner {
+  width: 60rpx; height: 60rpx;
+  border: 6rpx solid #e8eaed;
+  border-top-color: #1A9E75;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text {
+  margin-top: 24rpx; font-size: 28rpx; color: #999;
+}
+
+/* ====== 第二层：未登录 ====== */
+.state-login {
+  display: flex;
+  justify-content: center;
+  padding-top: 240rpx;
+}
+.login-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 64rpx 48rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 520rpx;
+  box-sizing: border-box;
+}
+.login-icon {
+  width: 96rpx; height: 96rpx;
+  border-radius: 50%;
+  background: #1A9E75;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24rpx;
+}
+.icon-t { font-size: 42rpx; font-weight: 700; color: #fff; }
+.login-title { font-size: 34rpx; font-weight: 700; color: #222; margin-bottom: 12rpx; }
+.login-desc { font-size: 26rpx; color: #999; text-align: center; line-height: 1.6; }
+
+/* ====== 按钮统一 ====== */
+.btn-primary {
+  margin-top: 32rpx;
+  width: 360rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  border-radius: 40rpx;
+  background: #1A9E75;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+  border: none !important;
+  box-shadow: 0 6rpx 18rpx rgba(26,158,117,0.25);
+}
+.btn-primary::after { border: none; }
+.btn-sm {
+  width: auto !important;
+  padding: 0 48rpx !important;
+  height: 72rpx !important;
+  line-height: 72rpx !important;
+  font-size: 28rpx !important;
+}
+
+/* ====== 第三层：已登录 - 头部 ====== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx 32rpx 24rpx;
+}
+.header-title { font-size: 44rpx; font-weight: 700; color: #222; display: block; }
+.header-sub { font-size: 26rpx; color: #999; display: block; margin-top: 8rpx; }
+
+.notify-btn {
+  position: relative;
+  width: 80rpx; height: 80rpx;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
+}
+.bell-text { font-size: 26rpx; color: #666; font-weight: 500; }
+.red-dot {
+  position: absolute;
+  top: 14rpx; right: 14rpx;
+  width: 16rpx; height: 16rpx;
+  border-radius: 50%;
+  background: #FF4D4F;
+}
+
+/* ====== 统计行 ====== */
+.stats-row {
+  display: flex;
+  gap: 20rpx;
+  padding: 0 32rpx;
+  margin-bottom: 32rpx;
+}
+.stat-card {
+  flex: 1;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 28rpx 20rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.03);
+}
+.stat-num { font-size: 36rpx; font-weight: 700; color: #1A9E75; }
+.stat-label { font-size: 24rpx; color: #999; margin-top: 6rpx; }
+.stat-highlight {
+  background: transparent;
+  box-shadow: none;
+  justify-content: center;
+}
+.stat-action { font-size: 26rpx; color: #2B7FDD; font-weight: 600; }
+
+/* ====== 区块标题 ====== */
+.section-header {
+  padding: 0 32rpx 20rpx;
+}
+.section-title { font-size: 32rpx; font-weight: 700; color: #222; }
+
+/* ====== 家人卡片 ====== */
+.elder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+  padding: 0 32rpx;
+}
+.elder-card {
+  background: #fff;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
+  display: flex;
+  position: relative;
+}
+.elder-card:active { opacity: 0.95; }
+
+/* 未读左侧绿条 */
+.card-unread::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 8rpx;
+  background: #1A9E75;
+  border-radius: 20rpx 0 0 20rpx;
+}
+.card-body { flex: 1; padding: 28rpx 28rpx 24rpx; }
+
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+.card-name-row {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  flex: 1;
+  overflow: hidden;
+}
+
+.avatar-circle {
+  width: 68rpx; height: 68rpx;
+  border-radius: 50%;
+  background: #EDF7F4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.avatar-char { font-size: 24rpx; color: #1A9E75; font-weight: 600; }
+.card-name { font-size: 32rpx; font-weight: 700; color: #222; }
+
+/* 标签系统 */
+.tag {
+  font-size: 22rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 10rpx;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.tag-normal { color: #1A9E75; background: rgba(26,158,117,0.08); }
+.tag-warning { color: #FA8C16; background: rgba(250,140,22,0.08); }
+.tag-done { color: #1A9E75; background: rgba(26,158,117,0.06); }
+
+.unread-pill {
+  background: rgba(255,77,79,0.06);
+  border-radius: 16rpx;
+  padding: 6rpx 16rpx;
+  flex-shrink: 0;
+}
+.unread-num { font-size: 22rpx; font-weight: 600; color: #FF4D4F; }
+
+/* 记录摘要 */
+.card-summary {
+  padding: 18rpx 0;
+  border-top: 1rpx solid #f0f2f5;
+  border-bottom: 1rpx solid #f0f2f5;
+}
+.summary-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+.summary-row:last-child { margin-bottom: 0; }
+.summary-label { font-size: 26rpx; color: #999; min-width: 140rpx; flex-shrink: 0; }
+.summary-value { font-size: 28rpx; color: #333; font-weight: 500; flex: 1; }
+
+.card-summary-empty {
+  padding: 16rpx 0;
+}
+.card-summary-empty text { font-size: 26rpx; color: #bbb; }
+
+/* 卡片底部 */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16rpx;
+}
+.footer-link { font-size: 26rpx; color: #1A9E75; font-weight: 600; }
+.footer-count { font-size: 24rpx; color: #bbb; }
+
+/* ====== 空状态 ====== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 48rpx 0;
+}
+.empty-icon { margin-bottom: 20rpx; }
+.empty-emoji { font-size: 64rpx; }
+.empty-main { font-size: 32rpx; font-weight: 600; color: #333; margin-bottom: 8rpx; }
+.empty-sub { font-size: 26rpx; color: #999; margin-bottom: 32rpx; }
