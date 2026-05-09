@@ -1,0 +1,32 @@
+<view class="page">
+  <view class="form-card">
+    <view class="form-item">
+      <text class="form-label">患者</text>
+      <picker mode="selector" range="{{elders}}" range-key="name" bindchange="onElderChange" value="{{selectedElderIdx}}">
+        <view class="form-input picker">{{elders[selectedElderIdx].name || '请选择'}} ▾</view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <text class="form-label">诊断</text>
+      <input class="form-input" placeholder="请输入诊断" data-field="diagnosis" bindinput="onInput" value="{{diagnosis}}" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">科室·医生</text>
+      <input class="form-input" placeholder="请输入科室和医生" data-field="doctor" bindinput="onInput" value="{{doctor}}" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">医院</text>
+      <input class="form-input" placeholder="请输入医院名称" data-field="hospital" bindinput="onInput" value="{{hospital}}" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">建议</text>
+      <input class="form-input" placeholder="请输入医嘱建议" data-field="advice" bindinput="onInput" value="{{advice}}" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">药物</text>
+      <input class="form-input" placeholder="请输入用药方案" data-field="medicine" bindinput="onInput" value="{{medicine}}" />
+    </view>
+  </view>
+
+  <button class="submit-btn" bindtap="onSubmit">提 交</button>
+</view>

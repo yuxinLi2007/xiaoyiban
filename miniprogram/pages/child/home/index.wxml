@@ -1,0 +1,49 @@
+<view class="page">
+  <view class="header">
+    <text class="title">就诊报告</text>
+    <text class="subtitle" wx:if="{{unreadCount}}">你有 {{unreadCount}} 条新报告</text>
+    <text class="subtitle" wx:elif="{{reports.length}}">共 {{reports.length}} 条记录</text>
+    <button class="add-btn" bindtap="goAdd">+ 添加记录</button>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{!reports.length}}">
+    <view class="empty-icon">📋</view>
+    <text class="empty-text">暂无记录</text>
+  </view>
+
+  <!-- 卡片列表 -->
+  <view class="card-list" wx:if="{{reports.length}}">
+    <view class="card {{item.isNew ? 'card-new' : 'card-read'}}" wx:for="{{reports}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
+      <!-- 右上角红点（点击后淡出） -->
+      <view class="badge {{activeId === item._id ? 'badge-fade' : ''}}" wx:if="{{item.isNew || activeId === item._id}}"></view>
+
+      <view class="card-header">
+        <view class="card-diagnosis-wrap">
+          <text class="card-diagnosis">{{item.diagnosis}}</text>
+          <text class="new-tag" wx:if="{{item.isNew && activeId !== item._id}}">NEW</text>
+          <text class="read-tag" wx:if="{{!item.isNew}}">已读</text>
+        </view>
+        <text class="card-time">{{item.date}}</text>
+      </view>
+      <view class="card-divider"></view>
+      <view class="card-body">
+        <view class="card-row">
+          <text class="card-label">主治医生</text>
+          <text class="card-value">{{item.doctor}}</text>
+        </view>
+        <view class="card-row">
+          <text class="card-label">用药方案</text>
+          <text class="card-value">{{item.medicine}}</text>
+        </view>
+        <view class="card-row">
+          <text class="card-label">医嘱建议</text>
+          <text class="card-value">{{item.advice}}</text>
+        </view>
+      </view>
+      <view class="card-footer">
+        <text class="card-action">查看详情 ›</text>
+      </view>
+    </view>
+  </view>
+</view>
