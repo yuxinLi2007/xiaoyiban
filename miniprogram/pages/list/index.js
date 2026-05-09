@@ -1,3 +1,13 @@
+/**
+ * 就诊记录列表页
+ *
+ * 核心逻辑：
+ *   1. 只以 isNew 字段判断未读（微信红点风格）
+ *   2. 每次返回页面 onShow 都从数据库重新拉取最新数据
+ *   3. 不缓存、不使用旧数据
+ *   4. 删除所有 status / statusText / pending 相关代码
+ */
+
 const db = wx.cloud.database()
 
 Page({
@@ -7,110 +17,131 @@ Page({
     filteredRecords: [],
     unreadCount: 0,
     activeTab: 'all',
-    tabs: [{ key: 'all', label: '全部' }]
+    tabs: [{ key: 'all', label: '全部' }],
+    loading: false
   },
 
-  /* ========== 每次显示都重新拉取最新数据（关键！）========== */
+  /* ============================================================
+   *  每次显示都重新拉取数据库最新数据
+   *  这是红点消失的关键：返回列表 → onShow → 重新查库 → isNew 已是 false
+   * ============================================================ */
   onShow() {
-    console.log('[list] ===== onShow 触发，开始重新拉取数据 =====')
-    this.getData()
+    console.log('[list] ===== onShow 触发 =====')
+    this.getRecords()
   },
 
-  getData() {
-    console.log('[list] getData() 开始执行')
+  /* ============================================================
+   *  从数据库拉取 elders + records
+   *  每次都是全新查询，不用缓存
+   * ============================================================ */
+  getRecords() {
+    console.log('[list] getRecords() 开始查询数据库')
 
-    // 1. 查询老人列表
-    db.collection('elders').where({}).get().then(elderRes => {
-      const elders = elderRes.data || []
-      const tabs = [{ key: 'all', label: '全部' }]
-      for (let i = 0; i < elders.length; i++) {
+    this.setData({ loading: true })
+
+    Promise.all([
+      db.collection('elders').where({}).get(),
+      db.collection('records').where({}).orderBy('date', 'desc').get()
+    ]).then(([elderRes, recordRes]) => {
+
+      var elders = elderRes.data || []
+      var records = recordRes.data || []
+      var unreadCount = 0
+
+      console.log('[list] 原始记录数:', records.length)
+
+      // 构建 tabs
+      var tabs = [{ key: 'all', label: '全部' }]
+      for (var i = 0; i < elders.length; i++) {
         tabs.push({ key: elders[i]._id, label: elders[i].name })
       }
 
-      // 2. 查询记录列表（每次从数据库拿最新）
-      db.collection('records').where({})
-        .orderBy('date', 'desc')
-        .get().then(recordRes => {
-          const records = recordRes.data || []
-          let unreadCount = 0
+      // 构建 elderName 映射
+      var elderMap = {}
+      for (var k = 0; k < elders.length; k++) {
+        elderMap[elders[k]._id] = elders[k].name
+      }
 
-          for (let j = 0; j < records.length; j++) {
-            if (records[j].isNew === true) unreadCount++
-          }
+      // 组装显示数据（只保留必要字段，isNew 是唯一的未读标识）
+      var enrichedRecords = records.map(function(r) {
+        var isNewVal = r.isNew === true
+        if (isNewVal) unreadCount++
 
-          console.log(`[list] 记录总数: ${records.length}, 未读数: ${unreadCount}`)
+        return {
+          _id: r._id,
+          elderId: r.elderId || '',
+          elderName: r.elderId ? (elderMap[r.elderId] || '') : (r.name || ''),
+          diagnosis: r.diagnosis || '',
+          date: r.date || '',
+          doctor: r.doctor || '',
+          hospital: r.hospital || '',
+          department: r.department || '',
+          source: r.source || '',
+          isNew: isNewVal
+        }
+      })
 
-          // 构建 elderName 映射
-          const elderMap = {}
-          for (let k = 0; k < elders.length; k++) {
-            elderMap[elders[k]._id] = elders[k].name
-          }
+      console.log('[list] 记录总数:', enrichedRecords.length, ', 未读数:', unreadCount)
+      console.log('[list] 各条记录isNew状态:', enrichedRecords.map(function(r) {
+        return r._id.slice(-6) + ':' + r.isNew
+      }).join(' | '))
 
-          // 补全每条记录的显示信息（携带 _id 和 isNew 最新值）
-          const enrichedRecords = records.map(r => {
-            let statusText = '待确认'
-            let statusClass = 'tag-pending'
-            if (r.status === 'done') { statusText = '已完成'; statusClass = 'tag-done' }
-            else if (r.status === 'need_review') { statusText = '需复诊'; statusClass = 'tag-review' }
+      this.setData({
+        elders: elders,
+        records: enrichedRecords,
+        unreadCount: unreadCount,
+        tabs: tabs,
+        loading: false
+      })
 
-            return {
-              _id: r._id,
-              elderId: r.elderId || '',
-              elderName: r.elderId ? (elderMap[r.elderId] || '') : (r.name || ''),
-              diagnosis: r.diagnosis || '',
-              date: r.date || '',
-              doctor: r.doctor || '',
-              hospital: r.hospital || '',
-              department: r.department || '',
-              source: r.source || '',
-              isNew: r.isNew === true,   // 确保是布尔值
-              statusText: statusText,
-              statusClass: statusClass
-            }
-          })
+      this.filterRecords()
 
-          this.setData({
-            elders: elders,
-            records: enrichedRecords,
-            unreadCount: unreadCount,
-            tabs: tabs
-          })
-
-          this.filterRecords()
-          console.log(`[list] ✅ 数据加载完成, 显示 ${this.data.filteredRecords.length} 条`)
-        })
-
-    }).catch(err => {
-      console.error('[list] 查询失败', err)
-    })
+    }).catch(function(err) {
+      console.error('[list] 数据库查询失败')
+      console.error('[list] errCode:', err.errCode)
+      console.error('[list] errMsg:', err.errMsg)
+      this.setData({ loading: false, records: [], filteredRecords: [], unreadCount: 0 })
+      wx.showToast({ title: '加载失败', icon: 'none' })
+    }.bind(this))
   },
 
+  /* ========== Tab 筛选切换 ========== */
   onTabTap(e) {
-    const key = e.currentTarget.dataset.key
+    var key = e.currentTarget.dataset.key
     this.setData({ activeTab: key })
     this.filterRecords()
   },
 
   filterRecords() {
-    const records = this.data.records
-    const activeTab = this.data.activeTab
-    let filtered = []
+    var records = this.data.records
+    var activeTab = this.data.activeTab
+    var filtered = []
+
     if (activeTab === 'all') {
       filtered = records
     } else {
-      for (let i = 0; i < records.length; i++) {
+      for (var i = 0; i < records.length; i++) {
         if (records[i].elderId === activeTab) {
           filtered.push(records[i])
         }
       }
     }
+
     this.setData({ filteredRecords: filtered })
   },
 
-  /* ========== 点击进入详情，使用 _id ========== */
+  /* ========== 点击进入详情 ========== */
   goDetail(e) {
-    const id = e.currentTarget.dataset.id
+    var id = e.currentTarget.dataset.id
     console.log('[list] 点击查看详情, _id:', id)
     wx.navigateTo({ url: '/pages/child/detail/index?id=' + id })
+  },
+
+  /* ========== 下拉刷新 ========== */
+  onPullDownRefresh() {
+    console.log('[list] 下拉刷新触发')
+    this.getRecords().finally(function() {
+      wx.stopPullDownRefresh()
+    })
   }
 })

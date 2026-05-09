@@ -67,14 +67,13 @@
 
         <view class="card-body">
 
-          <!-- 头部：名字 + 状态标签 + 未读数 -->
+          <!-- 头部：名字 + 未读数 -->
           <view class="card-top">
             <view class="card-name-row">
               <view class="avatar-circle">
                 <text class="avatar-char">{{item.gender === '男' ? '男' : '女'}}</text>
               </view>
-              <text class="card-name">{{item.name}}</text>
-              <text class="tag tag-{{item.statusTag}}">{{item.statusText}}</text>
+              <text class="card-name">{{item.name}} <text class="name-sep">·</text> {{item.relation}}</text>
             </view>
             <view class="unread-pill" wx:if="{{item.unreadCount > 0}}">
               <text class="unread-num">{{item.unreadCount}} 条新消息</text>

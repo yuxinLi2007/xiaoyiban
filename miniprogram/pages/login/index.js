@@ -1,104 +1,146 @@
-// pages/login/index.js - 登录页
+// pages/login/index.js — 子女端登录页
 
 Page({
   data: {
-    avatarUrl: '',
-    busy: false
+    statusBarHeight: 44,
+
+    busy: false,
+    agreed: true,
+
+    showPhoneForm: false,
+    phone: '',
+    code: '',
+    counting: false,
+    countdown: 60
   },
 
   onLoad() {
-    console.log('[login] onLoad 触发')
+    const sys = wx.getSystemInfoSync()
+    this.setData({ statusBarHeight: sys.statusBarHeight || 44 })
   },
 
-  onShow() {
-    console.log('[login] onShow 触发, busy:', this.data.busy)
+  /* ====== 协议勾选 ====== */
+  toggleAgree() {
+    this.setData({ agreed: !this.data.agreed })
   },
 
-  onChooseAvatar(e) {
-    console.log('[login] 选择头像')
-    this.setData({ avatarUrl: e.detail.avatarUrl })
+  /* ====== 检查协议 ====== */
+  _checkAgree() {
+    if (!this.data.agreed) {
+      wx.showToast({ title: '请先同意协议', icon: 'none' })
+      return false
+    }
+    return true
   },
 
-  doLogin() {
-    console.log('[login] doLogin 被调用, busy:', this.data.busy)
-
+  /* ====== 微信一键登录 ====== */
+  doWechatLogin() {
+    if (!this._checkAgree()) return
     if (this.data.busy) return
+
     this.setData({ busy: true })
 
-    console.log('[login] 开始调用云函数 login...')
+    /* ---- 真实接入时取消注释 ---- *
+     * wx.login({
+     *   success(res) { ... }
+     * })
+     *
+     * wx.cloud.callFunction({
+     *   name: 'login',
+     *   data: {},
+     *   success: res => { ... },
+     *   fail: err => { ... }
+     * })
+     */
 
-    wx.cloud.callFunction({
-      name: 'login',
-      data: {},
-      success: res => {
-        console.log('[login] 云函数原始返回:', JSON.stringify(res))
+    // 模拟登录成功
+    setTimeout(() => {
+      wx.showToast({ title: '登录成功', icon: 'success' })
+      this.setData({ busy: false })
 
-        const r = res.result
-        console.log('[login] res.result:', JSON.stringify(r))
+      setTimeout(() => {
+        wx.switchTab({ url: '/pages/home/index' })
+      }, 800)
+    }, 1200)
+  },
 
-        if (!r || !r.success) {
-          console.error('[login] 云函数返回失败', r)
-          wx.showToast({
-            title: (r && r.error) || '登录失败',
-            icon: 'none',
-            duration: 2000
-          })
-          this.setData({ busy: false })
-          return
-        }
+  /* ====== 打开手机号表单 ====== */
+  openPhoneLogin() {
+    if (!this._checkAgree()) return
+    this.setData({ showPhoneForm: true })
+  },
 
-        const openid = r.openid || ''
-        const familyId = r.familyId || ''
-
-        console.log('[login] 登录成功! openid:', openid, 'familyId:', familyId)
-
-        // 写入全局 + 缓存
-        const app = getApp()
-        app.setLoggedIn(familyId, openid)
-
-        // 额外确保缓存写入
-        try {
-          wx.setStorageSync('openid', openid)
-          wx.setStorageSync('familyId', familyId)
-        } catch (e) {
-          console.error('[login] 缓存写入异常', e)
-        }
-
-        wx.showToast({ title: '登录成功', icon: 'success' })
-
-        setTimeout(() => {
-          console.log('[login] 准备 switchTab 到 /pages/home/index')
-          wx.switchTab({
-            url: '/pages/home/index'
-          })
-        }, 800)
-      },
-
-      fail: err => {
-        console.error('[login] 云函数调用失败:', JSON.stringify(err))
-        let msg = '网络异常'
-
-        if (!err) {
-          msg = '未知错误'
-        } else if (err.errCode === -1) {
-          msg = '网络连接失败，请检查网络'
-        } else if (err.errCode === 404011) {
-          msg = '云函数不存在，请联系管理员'
-        } else if (err.errCode === 404008) {
-          msg = '无权限调用云函数'
-        } else if (err.errMsg) {
-          msg = err.errMsg
-        }
-
-        console.error('[login] 错误信息:', msg)
-
-        wx.showToast({
-          title: msg,
-          icon: 'none',
-          duration: 3000
-        })
-        this.setData({ busy: false })
-      }
+  closePhoneLogin() {
+    this.setData({
+      showPhoneForm: false,
+      phone: '',
+      code: ''
     })
+  },
+
+  onPhoneInput(e) {
+    this.setData({ phone: e.detail.value.replace(/\D/g, '') })
+  },
+
+  onCodeInput(e) {
+    this.setData({ code: e.detail.value.replace(/\D/g, '') })
+  },
+
+  /* ====== 发送验证码（模拟）====== */
+  sendCode() {
+    const phone = this.data.phone
+    if (!phone || phone.length !== 11) {
+      return wx.showToast({ title: '请输入正确手机号', icon: 'none' })
+    }
+    if (this.data.counting) return
+
+    wx.showToast({ title: '验证码已发送', icon: 'none' })
+
+    this.setData({ counting: true, countdown: 60 })
+    this._timer = setInterval(() => {
+      let n = this.data.countdown - 1
+      if (n <= 0) {
+        clearInterval(this._timer)
+        this.setData({ counting: false, countdown: 60 })
+      } else {
+        this.setData({ countdown: n })
+      }
+    }, 1000)
+  },
+
+  /* ====== 手机号提交 ====== */
+  doPhoneLogin() {
+    const p = this.data.phone
+    const c = this.data.code
+
+    if (!p || p.length !== 11) {
+      return wx.showToast({ title: '请输入正确手机号', icon: 'none' })
+    }
+    if (!c || c.length < 4) {
+      return wx.showToast({ title: '请输入验证码', icon: 'none' })
+    }
+    if (!this._checkAgree()) return
+
+    /* ---- 真实接入时替换 ---- *
+     * wx.request({
+     *   url: 'https://api.xxx.com/login',
+     *   method: 'POST',
+     *   data: { phone, code },
+     *   ...
+     * })
+     */
+
+    wx.showLoading({ title: '登录中...' })
+    setTimeout(() => {
+      wx.hideLoading()
+      wx.showToast({ title: '登录成功', icon: 'success' })
+      setTimeout(() => {
+        wx.switchTab({ url: '/pages/home/index' })
+      }, 800)
+    }, 1000)
+  },
+
+  onUnload() {
+    if (this._timer) clearInterval(this._timer)
   }
 })

@@ -199,6 +199,7 @@ page {
 }
 .avatar-char { font-size: 24rpx; color: #1A9E75; font-weight: 600; }
 .card-name { font-size: 32rpx; font-weight: 700; color: #222; }
+.name-sep { font-size: 28rpx; color: #bbb; margin: 0 6rpx; font-weight: 400; }
 
 /* 标签系统 */
 .tag {
