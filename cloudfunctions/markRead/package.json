@@ -1,1 +1,0 @@
-{"name": "markRead", "version": "1.0.0", "description": "标记就诊记录已读", "main": "index.js", "scripts": {"test": "echo \"Error: no test specified\" && exit 1"}, "author": "", "license": "ISC", "dependencies": {"wx-server-sdk": "~2.6.3"}}

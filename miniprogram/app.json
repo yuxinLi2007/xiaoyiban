@@ -1,33 +1,14 @@
 {
   "pages": [
-    "pages/login/index",
-    "pages/home/index",
-    "pages/list/index",
-    "pages/child/detail/index",
-    "pages/child/add/index"
+    "pages/index/index",
+    "pages/example/index"
   ],
   "window": {
-    "backgroundColor": "#F5F7FA",
+    "backgroundColor": "#F6F6F6",
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#F5F7FA",
-    "navigationBarTitleText": "我的小医陪",
+    "navigationBarBackgroundColor": "#F6F6F6",
+    "navigationBarTitleText": "云开发 QuickStart",
     "navigationBarTextStyle": "black"
-  },
-  "tabBar": {
-    "color": "#999",
-    "selectedColor": "#1A9E75",
-    "backgroundColor": "#ffffff",
-    "borderStyle": "white",
-    "list": [
-      {
-        "pagePath": "pages/home/index",
-        "text": "首页"
-      },
-      {
-        "pagePath": "pages/list/index",
-        "text": "就诊记录"
-      }
-    ]
   },
   "sitemapLocation": "sitemap.json",
   "style": "v2",
