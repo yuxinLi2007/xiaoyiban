@@ -1,0 +1,9 @@
+<view class="container">
+  <view class="page-title">就诊摘要</view>
+  <view class="info-bar"><text class="dept">{{deptName}}</text><text class="doctor">{{doctorName}}</text></view>
+  <view class="status">{{statusText}}</view>
+  <view class="hospital">就诊医院：{{hospitalName}}</view>
+  <view class="time">{{visitTime}}</view>
+  <view class="summary-card"><view class="summary-title">医生建议摘要</view><view class="summary-content">{{summaryText || '暂无摘要数据'}}</view></view>
+  <view class="transcript-card" wx:if="{{transcriptText}}"><view class="summary-title">完整对话记录</view><view class="transcript-content">{{transcriptText}}</view></view>
+</view>
