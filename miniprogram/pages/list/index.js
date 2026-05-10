@@ -27,6 +27,12 @@ Page({
    * ============================================================ */
   onShow() {
     console.log('[list] ===== onShow 触发 =====')
+
+    // 设置自定义 tabBar 选中状态（子女端就诊记录 = index 1）
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 1 })
+    }
+
     this.getRecords()
   },
 

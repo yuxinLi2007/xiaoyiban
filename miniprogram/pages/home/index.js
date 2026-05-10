@@ -15,6 +15,11 @@ Page({
   onShow() {
     console.log('[home] ===== onShow 触发 =====')
 
+    // 设置自定义 tabBar 选中状态（子女端首页 = index 0）
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 0 })
+    }
+
     var app = getApp()
     var familyId = ''
 

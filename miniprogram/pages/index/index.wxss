@@ -1,4 +1,4 @@
-/** index.wxss **/
+/** index.wxss — 老人端首页「今日提醒」 **/
 
 page {
   padding-top: 54rpx;
@@ -12,20 +12,53 @@ page {
   min-height: 100vh;
 }
 
+/* 加载状态 */
+.loading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 200rpx;
+}
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 6rpx solid #e0e0e0;
+  border-top-color: #07C160;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+.loading-text {
+  margin-top: 20rpx;
+  font-size: 30rpx;
+  color: #999;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 页面头部 */
+.page-header {
+  margin-bottom: 36rpx;
+}
+
+.greeting {
+  font-size: 34rpx;
+  color: #666;
+  margin-bottom: 12rpx;
+}
+
 /* 页面标题 — 大号适老 */
 .page-title {
   font-size: 48rpx;
   font-weight: bold;
   color: #1a1a1a;
-  margin-bottom: 36rpx;
 }
 
 /* 提醒卡片 — 白色圆角 */
 .card {
   background: #ffffff;
   border-radius: 20rpx;
-  padding: 32rpx 32rpx;
-  margin-bottom: 32rpx;
+  padding: 32rpx;
+  margin-bottom: 28rpx;
   box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: row;
@@ -42,20 +75,39 @@ page {
 /* 卡片左侧文字区域 */
 .card-body {
   flex: 1;
+  display: flex;
+  align-items: center;
   margin-right: 20rpx;
+}
+
+.card.card-tip .card-body {
+  margin-right: 0;
+  margin-bottom: 4rpx;
+}
+
+/* 卡片图标 */
+.card-icon {
+  font-size: 44rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+/* 卡片文字 */
+.card-text {
+  flex: 1;
 }
 
 /* 卡片标题 */
 .card-title {
-  font-size: 40rpx;
+  font-size: 38rpx;
   font-weight: bold;
   color: #1a1a1a;
-  margin-bottom: 12rpx;
+  margin-bottom: 8rpx;
 }
 
 /* 卡片副标题 */
 .card-subtitle {
-  font-size: 36rpx;
+  font-size: 34rpx;
   color: #888888;
 }
 

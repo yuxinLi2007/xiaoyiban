@@ -1,38 +1,60 @@
-<!-- pages/index/index.wxml -->
+<!-- pages/index/index.wxml — 老人端首页「今日提醒」 -->
 <view class="container">
-  <!-- 顶部大标题 -->
-  <view class="page-title">今日提醒</view>
 
-  <!-- 用药提醒卡片 -->
-  <view class="card">
-    <view class="card-body">
-      <view class="card-title">降压药（硝苯地平）</view>
-      <view class="card-subtitle">每日1次，每次1片</view>
-    </view>
-    <view class="card-action">
-      <button wx:if="{{!medicineDone}}" class="btn-taken" bindtap="markMedicineDone">我吃过了</button>
-      <view wx:else class="taken-label">✔ 已服用</view>
-    </view>
+  <!-- 加载中 -->
+  <view class="loading-wrap" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
   </view>
 
-  <!-- 复诊提醒卡片 -->
-  <view class="card">
-    <view class="card-body">
-      <view class="card-title">心内科复诊</view>
-      <view class="card-subtitle">2024年6月20日 上午 09:30</view>
-    </view>
-    <view class="card-action">
-      <view class="remind-tag">🔔 别忘啦</view>
-    </view>
-  </view>
+  <block wx:else>
 
-  <!-- 健康小贴士卡片 -->
-  <view class="card card-tip">
-    <view class="card-body">
-      <view class="card-title">❤️ 暖心小贴士</view>
-      <view class="card-subtitle">低盐饮食：每日食盐不超过6克</view>
+    <!-- 顶部问候 + 大标题 -->
+    <view class="page-header">
+      <view class="greeting">👋 {{elderName || '您好'}}，今天记得按时吃药哦</view>
+      <view class="page-title">今日提醒</view>
     </view>
-    <!-- 分享按钮放在卡片底部 -->
-    <button class="share-tip-btn" bindtap="shareTipToChildren">分享今日提醒给子女</button>
-  </view>
+
+    <!-- 用药提醒卡片（可多条） -->
+    <view class="card" wx:for="{{medicines}}" wx:key="_id">
+      <view class="card-body">
+        <view class="card-icon">💊</view>
+        <view class="card-text">
+          <view class="card-title">{{item.name}}</view>
+          <view class="card-subtitle">{{item.frequency}}，{{item.dosage}}</view>
+        </view>
+      </view>
+      <view class="card-action">
+        <button wx:if="{{!item.done}}" class="btn-taken" data-index="{{index}}" bindtap="markMedicineDone">我吃过了</button>
+        <view wx:else class="taken-label">✔ 已服用</view>
+      </view>
+    </view>
+
+    <!-- 复诊提醒卡片（可多条） -->
+    <view class="card" wx:for="{{visits}}" wx:key="_id">
+      <view class="card-body">
+        <view class="card-icon">🏥</view>
+        <view class="card-text">
+          <view class="card-title">{{item.name}}</view>
+          <view class="card-subtitle">{{item.dateText}}</view>
+        </view>
+      </view>
+      <view class="card-action">
+        <view class="remind-tag">🔔 别忘啦</view>
+      </view>
+    </view>
+
+    <!-- 健康小贴士卡片 -->
+    <view class="card card-tip">
+      <view class="card-body">
+        <view class="card-icon">❤️</view>
+        <view class="card-text">
+          <view class="card-title">暖心小贴士</view>
+          <view class="card-subtitle">{{tip}}</view>
+        </view>
+      </view>
+      <button class="share-tip-btn" bindtap="shareTipToChildren">分享今日提醒给子女</button>
+    </view>
+
+  </block>
 </view>

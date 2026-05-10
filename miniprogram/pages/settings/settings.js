@@ -4,6 +4,13 @@ Page({
     pushEnabled: true // 微信推送开关状态
   },
 
+  onShow() {
+    // 设置自定义 tabBar 选中状态（老人端设置 = index 3）
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 3 })
+    }
+  },
+
   /**
    * 绑定子女设备 — 弹出模态框提示
    */

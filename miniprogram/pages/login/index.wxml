@@ -13,8 +13,22 @@
           <view class="logo-plus"></view>
         </view>
       </view>
-      <text class="title">我的小医陪 · 子女端</text>
-      <text class="subtitle">登录后即可查看长辈就诊记录、管理健康档案</text>
+      <text class="title">我的小医陪</text>
+      <text class="subtitle">{{role === 'elder' ? '录音就诊对话，自动生成就诊记录' : '查看长辈就诊记录、管理健康档案'}}</text>
+    </view>
+
+    <!-- 角色选择 -->
+    <view class="role-select" wx:if="{{!showPhoneForm}}">
+      <view class="role-option {{role === 'child' ? 'role-active' : ''}}" bindtap="selectRole" data-role="child">
+        <!-- <text class="role-icon">👨‍👧‍👦</text> -->
+        <text class="role-label">子女端</text>
+        <text class="role-desc">查看就诊记录</text>
+      </view>
+      <view class="role-option {{role === 'elder' ? 'role-active' : ''}}" bindtap="selectRole" data-role="elder">
+        <!-- <text class="role-icon">🧓</text> -->
+        <text class="role-label">老人端</text>
+        <text class="role-desc">录音+查看记录</text>
+      </view>
     </view>
 
     <!-- 按钮区 -->

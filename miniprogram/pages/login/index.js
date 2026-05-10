@@ -1,11 +1,14 @@
 // pages/login/index.js — 子女端登录页
 
+const app = getApp()
+
 Page({
   data: {
     statusBarHeight: 44,
 
     busy: false,
     agreed: true,
+    role: 'child', // 默认子女端，可选 'elder'
 
     showPhoneForm: false,
     phone: '',
@@ -24,6 +27,11 @@ Page({
     this.setData({ agreed: !this.data.agreed })
   },
 
+  /* ====== 角色选择 ====== */
+  selectRole(e) {
+    this.setData({ role: e.currentTarget.dataset.role })
+  },
+
   /* ====== 检查协议 ====== */
   _checkAgree() {
     if (!this.data.agreed) {
@@ -39,29 +47,57 @@ Page({
     if (this.data.busy) return
 
     this.setData({ busy: true })
+    wx.showLoading({ title: '登录中...' })
 
-    /* ---- 真实接入时取消注释 ---- *
-     * wx.login({
-     *   success(res) { ... }
-     * })
-     *
-     * wx.cloud.callFunction({
-     *   name: 'login',
-     *   data: {},
-     *   success: res => { ... },
-     *   fail: err => { ... }
-     * })
-     */
+    wx.cloud.callFunction({
+      name: 'login',
+      data: {},
+      success: async (res) => {
+        wx.hideLoading()
+        const result = res.result
 
-    // 模拟登录成功
-    setTimeout(() => {
-      wx.showToast({ title: '登录成功', icon: 'success' })
-      this.setData({ busy: false })
+        if (!result.success) {
+          this.setData({ busy: false })
+          wx.showToast({ title: result.error || '登录失败', icon: 'none' })
+          return
+        }
 
-      setTimeout(() => {
-        wx.switchTab({ url: '/pages/home/index' })
-      }, 800)
-    }, 1200)
+        // 登录成功，写入全局状态（使用选择的角色）
+        const selectedRole = this.data.role
+        app.setLoggedIn(result.familyId, result.openid, { role: selectedRole })
+
+        // 尝试查询该家庭下第一个老人，作为默认 elderId
+        try {
+          const elderRes = await wx.cloud.database().collection('elders')
+            .where({ familyId: result.familyId })
+            .limit(1)
+            .get()
+          if (elderRes.data.length > 0) {
+            app.globalData.elderId = elderRes.data[0]._id
+            wx.setStorageSync('elderId', elderRes.data[0]._id)
+          }
+        } catch (e) {
+          console.warn('[login] 查询老人信息失败，不影响使用:', e)
+        }
+
+        this.setData({ busy: false })
+        wx.showToast({ title: '登录成功', icon: 'success' })
+        setTimeout(() => {
+          // 根据角色跳转不同首页
+          if (selectedRole === 'elder') {
+            wx.switchTab({ url: '/pages/index/index' })
+          } else {
+            wx.switchTab({ url: '/pages/home/index' })
+          }
+        }, 800)
+      },
+      fail: (err) => {
+        wx.hideLoading()
+        this.setData({ busy: false })
+        console.error('[login] 云函数调用失败:', err)
+        wx.showToast({ title: '登录失败，请重试', icon: 'none' })
+      }
+    })
   },
 
   /* ====== 打开手机号表单 ====== */
@@ -108,7 +144,7 @@ Page({
     }, 1000)
   },
 
-  /* ====== 手机号提交 ====== */
+  /* ====== 手机号提交（走同一套云函数登录）====== */
   doPhoneLogin() {
     const p = this.data.phone
     const c = this.data.code
@@ -121,23 +157,8 @@ Page({
     }
     if (!this._checkAgree()) return
 
-    /* ---- 真实接入时替换 ---- *
-     * wx.request({
-     *   url: 'https://api.xxx.com/login',
-     *   method: 'POST',
-     *   data: { phone, code },
-     *   ...
-     * })
-     */
-
-    wx.showLoading({ title: '登录中...' })
-    setTimeout(() => {
-      wx.hideLoading()
-      wx.showToast({ title: '登录成功', icon: 'success' })
-      setTimeout(() => {
-        wx.switchTab({ url: '/pages/home/index' })
-      }, 800)
-    }, 1000)
+    // 手机号登录同样走云函数 login（微信小程序中 openid 由云函数自动获取）
+    this.doWechatLogin()
   },
 
   onUnload() {

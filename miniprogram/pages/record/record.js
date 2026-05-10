@@ -1,3 +1,4 @@
+const app = getApp()
 const db = wx.cloud.database()
 const recorderManager = wx.getRecorderManager()
 const innerAudioContext = wx.createInnerAudioContext()
@@ -12,6 +13,11 @@ Page({
   },
 
   onLoad() {
+    // 设置自定义 tabBar 选中状态（老人端录音 = index 1）
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 1 })
+    }
+
     // 监听录音结束
     recorderManager.onStop((res) => {
       this.setData({
@@ -81,8 +87,13 @@ Page({
       const fileID = uploadRes.fileID
       console.log('[真实录音] 上传成功, fileID:', fileID)
 
-      // 2. 获取当前老人ID（临时用硬编码，后续改为动态获取）
-      const elderId = '9756e76169f7351500c0097c65c026b3'
+      // 2. 获取当前老人ID（从全局登录态获取，兜底用缓存）
+      const elderId = app.globalData.elderId || wx.getStorageSync('elderId') || ''
+      if (!elderId) {
+        wx.hideLoading()
+        wx.showToast({ title: '请先登录', icon: 'none' })
+        return
+      }
 
       // 3. 调用 uploadAudio 云函数
       const audioRes = await wx.cloud.callFunction({
@@ -128,7 +139,12 @@ Page({
   // 模拟就诊：路演演示使用
   async simulateVisit() {
     wx.showLoading({ title: '就诊记录生成中...' })
-    const elderId = '9756e76169f7351500c0097c65c026b3'
+    const elderId = app.globalData.elderId || wx.getStorageSync('elderId') || ''
+    if (!elderId) {
+      wx.hideLoading()
+      wx.showToast({ title: '请先登录', icon: 'none' })
+      return
+    }
     const fileID = this.data.demoFileID
 
     try {
