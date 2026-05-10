@@ -1,5 +1,4 @@
-// app.js - 全局登录态管理中心
-
+// app.js
 App({
   globalData: {
     env: 'cloudbase-d7gtr74bw289f62e6',
@@ -12,17 +11,14 @@ App({
   },
 
   onLaunch: function () {
-    console.log('【app】onLaunch 开始')
-
-    // 1. 初始化云开发
-    if (wx.cloud) {
+    if (!wx.cloud) {
+      console.error('【app】wx.cloud 不存在，请使用 2.2.3+ 基础库')
+    } else {
       wx.cloud.init({
         env: this.globalData.env,
         traceUser: true
       })
       console.log('【app】wx.cloud.init 成功, env:', this.globalData.env)
-    } else {
-      console.error('【app】wx.cloud 不存在，请使用 2.2.3+ 基础库')
     }
 
     // 2. 从本地缓存恢复登录状态
