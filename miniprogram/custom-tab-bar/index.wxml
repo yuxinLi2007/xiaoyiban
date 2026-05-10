@@ -1,0 +1,31 @@
+<view class="tab-bar">
+  <!-- 子女端 Tab -->
+  <block wx:if="{{role === 'child'}}">
+    <view
+      wx:for="{{childList}}"
+      wx:key="pagePath"
+      class="tab-item {{selected === index ? 'active' : ''}}"
+      data-path="{{item.pagePath}}"
+      data-index="{{index}}"
+      bindtap="switchTab"
+    >
+      <text class="tab-icon">{{selected === index ? item.activeIcon : item.icon}}</text>
+      <text class="tab-text">{{item.text}}</text>
+    </view>
+  </block>
+
+  <!-- 老人端 Tab -->
+  <block wx:else>
+    <view
+      wx:for="{{elderList}}"
+      wx:key="pagePath"
+      class="tab-item {{selected === index ? 'active' : ''}}"
+      data-path="{{item.pagePath}}"
+      data-index="{{index}}"
+      bindtap="switchTab"
+    >
+      <text class="tab-icon">{{selected === index ? item.activeIcon : item.icon}}</text>
+      <text class="tab-text">{{item.text}}</text>
+    </view>
+  </block>
+</view>

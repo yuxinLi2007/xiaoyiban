@@ -1,0 +1,105 @@
+<view class="page">
+  <!-- 状态栏占位 -->
+  <view class="status-bar" style="padding-top:{{statusBarHeight}}px"></view>
+
+  <!-- 主内容区 -->
+  <view class="main">
+
+    <!-- 品牌 Logo + 标题 -->
+    <view class="brand">
+      <view class="logo-wrap">
+        <view class="logo-box">
+          <view class="logo-heart"></view>
+          <view class="logo-plus"></view>
+        </view>
+      </view>
+      <text class="title">我的小医陪</text>
+      <text class="subtitle">{{role === 'elder' ? '录音就诊对话，自动生成就诊记录' : '查看长辈就诊记录、管理健康档案'}}</text>
+    </view>
+
+    <!-- 角色选择 -->
+    <view class="role-select" wx:if="{{!showPhoneForm}}">
+      <view class="role-option {{role === 'child' ? 'role-active' : ''}}" bindtap="selectRole" data-role="child">
+        <!-- <text class="role-icon">👨‍👧‍👦</text> -->
+        <text class="role-label">子女端</text>
+        <text class="role-desc">查看就诊记录</text>
+      </view>
+      <view class="role-option {{role === 'elder' ? 'role-active' : ''}}" bindtap="selectRole" data-role="elder">
+        <!-- <text class="role-icon">🧓</text> -->
+        <text class="role-label">老人端</text>
+        <text class="role-desc">录音+查看记录</text>
+      </view>
+    </view>
+
+    <!-- 按钮区 -->
+    <view class="btn-area">
+      <!-- 微信一键登录 -->
+      <button
+        wx:if="{{!showPhoneForm}}"
+        class="btn btn-wx {{busy ? 'busy' : ''}}"
+        disabled="{{busy}}"
+        bindtap="doWechatLogin"
+      >
+        <view class="btn-icon wx-icon"></view>
+        <text>{{ busy ? '登录中...' : '微信一键登录' }}</text>
+      </button>
+
+      <!-- 手机号登录 -->
+      <button
+        wx:if="{{!showPhoneForm}}"
+        class="btn btn-phone"
+        bindtap="openPhoneLogin"
+      >
+        <view class="btn-icon sms-icon"></view>
+        <text>手机号登录</text>
+      </button>
+
+      <!-- 手机号表单 -->
+      <block wx:if="{{showPhoneForm}}">
+        <view class="form-item">
+          <input
+            class="form-input"
+            type="number"
+            maxlength="11"
+            placeholder="请输入手机号"
+            value="{{phone}}"
+            bindinput="onPhoneInput"
+          />
+        </view>
+        <view class="form-row">
+          <input
+            class="form-input code-input"
+            type="number"
+            maxlength="6"
+            placeholder="验证码"
+            value="{{code}}"
+            bindinput="onCodeInput"
+          />
+          <view
+            class="code-btn {{counting ? 'disabled' : ''}}"
+            bindtap="sendCode"
+          >{{ counting ? countdown + 's' : '获取验证码' }}</view>
+        </view>
+        <button class="btn btn-wx" bindtap="doPhoneLogin">登 录</button>
+        <view class="back-link" bindtap="closePhoneLogin">返回微信登录</view>
+      </block>
+    </view>
+
+    <!-- 协议勾选 -->
+    <view class="agree-row" bindtap="toggleAgree">
+      <view class="checkbox {{agreed ? 'checked' : ''}}">
+        <view wx:if="{{agreed}}" class="check-mark"></view>
+      </view>
+      <text class="agree-text">我已阅读并同意</text>
+      <text class="agree-link">《用户协议》</text>
+      <text class="agree-text">和</text>
+      <text class="agree-link">《隐私政策》</text>
+    </view>
+
+    <!-- 底部安全提示 -->
+    <view class="safe-tip">
+      <text>安全加密 · 隐私保护 · 医疗级数据安全</text>
+    </view>
+
+  </view>
+</view>

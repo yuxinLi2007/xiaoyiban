@@ -1,0 +1,14 @@
+{
+  "name": "uploadAudio",
+  "version": "1.0.0",
+  "description": "接收音频文件存云存储",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "wx-server-sdk": "~2.4.0"
+  }
+}

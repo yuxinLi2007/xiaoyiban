@@ -1,14 +1,51 @@
 {
   "pages": [
+    "pages/login/index",
+    "pages/home/index",
+    "pages/list/index",
+    "pages/child/detail/index",
+    "pages/child/add/index",
     "pages/index/index",
-    "pages/example/index"
+    "pages/record/record",
+    "pages/history/history",
+    "pages/settings/settings",
+    "pages/detail/detail"
   ],
   "window": {
-    "backgroundColor": "#F6F6F6",
+    "backgroundColor": "#F5F7FA",
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#F6F6F6",
-    "navigationBarTitleText": "云开发 QuickStart",
+    "navigationBarBackgroundColor": "#F5F7FA",
+    "navigationBarTitleText": "我的小医陪",
     "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#999",
+    "selectedColor": "#1A9E75",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/list/index",
+        "text": "就诊记录"
+      },
+      {
+        "pagePath": "pages/index/index",
+        "text": "今日提醒"
+      },
+      {
+        "pagePath": "pages/record/record",
+        "text": "录音"
+      },
+      {
+        "pagePath": "pages/history/history",
+        "text": "历史记录"
+      }
+    ]
   },
   "sitemapLocation": "sitemap.json",
   "style": "v2",
