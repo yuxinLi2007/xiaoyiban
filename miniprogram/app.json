@@ -4,7 +4,13 @@
     "pages/home/index",
     "pages/list/index",
     "pages/child/detail/index",
-    "pages/child/add/index"
+    "pages/child/add/index",
+    "pages/index/index",
+    "pages/record/record",
+    "pages/history/history",
+    "pages/settings/settings",
+    "pages/detail/detail"
+    
   ],
   "window": {
     "backgroundColor": "#F5F7FA",

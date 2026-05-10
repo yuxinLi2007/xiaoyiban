@@ -67,12 +67,37 @@ Page({
         var isNewVal = r.isNew === true
         if (isNewVal) unreadCount++
 
+        // --- 修复：日期格式化处理 ---
+        // serverDate 对象在云函数写入后，前端读到的是对象，需要转为字符串
+        // 已有的字符串日期（如 "2026-05-01"）直接保留
+        var displayDate = ''
+        var rawDate = r.date
+        if (rawDate) {
+          if (typeof rawDate === 'string') {
+            // 已经是字符串格式，直接使用
+            displayDate = rawDate
+          } else {
+            // serverDate 对象需要转换
+            try {
+              var d = new Date(rawDate)
+              if (!isNaN(d.getTime())) {
+                var year = d.getFullYear()
+                var month = String(d.getMonth() + 1).padStart(2, '0')
+                var day = String(d.getDate()).padStart(2, '0')
+                displayDate = year + '-' + month + '-' + day
+              }
+            } catch (e) {
+              displayDate = ''
+            }
+          }
+        }
+
         return {
           _id: r._id,
           elderId: r.elderId || '',
           elderName: r.elderId ? (elderMap[r.elderId] || '') : (r.name || ''),
           diagnosis: r.diagnosis || '',
-          date: r.date || '',
+          date: displayDate,
           doctor: r.doctor || '',
           hospital: r.hospital || '',
           department: r.department || '',

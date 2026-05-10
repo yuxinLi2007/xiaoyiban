@@ -108,6 +108,29 @@ Page({
       var res = await db.collection('records').doc(id).get()
       var report = res.data
 
+      // ========== 新增：统一格式化日期字段（防止显示 [object Object]） ==========
+      if (report.date) {
+        if (typeof report.date === 'string') {
+          // 如果已经是字符串，直接保留
+          report.date = report.date
+        } else {
+          // 如果是 serverDate 对象，转为 YYYY-MM-DD 格式
+          try {
+            var d = new Date(report.date)
+            if (!isNaN(d.getTime())) {
+              var year = d.getFullYear()
+              var month = String(d.getMonth() + 1).padStart(2, '0')
+              var day = String(d.getDate()).padStart(2, '0')
+              report.date = year + '-' + month + '-' + day
+            }
+          } catch (e) {
+            // 转换失败则置空
+            report.date = ''
+          }
+        }
+      }
+      // ========== 新增结束 ==========
+
       if (!report) {
         console.error('[detail] 数据为空')
         this.setData({ loading: false, loadError: '该记录不存在' })

@@ -1,0 +1,63 @@
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading-wrap" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <block wx:else>
+    <view class="page-title">就诊摘要</view>
+
+    <!-- 基础信息 -->
+    <view class="info-bar">
+      <text class="dept">{{department}}</text>
+      <text class="doctor">{{doctor}}</text>
+    </view>
+    <view class="status {{statusText === '已完成' ? 'status-done' : 'status-pending'}}">{{statusText}}</view>
+    <view class="hospital">就诊医院：{{hospital}}</view>
+    <view class="time">{{date}}</view>
+    <view class="elder-name" wx:if="{{elderName}}">患者：{{elderName}}</view>
+
+    <!-- 诊断 -->
+    <view class="summary-card" wx:if="{{diagnosis}}">
+      <view class="summary-title">诊断</view>
+      <view class="summary-content">{{diagnosis}}</view>
+    </view>
+
+    <!-- 用药 -->
+    <view class="summary-card" wx:if="{{medicine}}">
+      <view class="summary-title">用药方案</view>
+      <view class="summary-content">{{medicine}}</view>
+    </view>
+
+    <!-- 医生建议 -->
+    <view class="summary-card" wx:if="{{advice}}">
+      <view class="summary-title">医生建议</view>
+      <view class="summary-content">{{advice}}</view>
+    </view>
+
+    <!-- 随访计划 -->
+    <view class="summary-card" wx:if="{{followUp}}">
+      <view class="summary-title">随访计划</view>
+      <view class="summary-content">{{followUp}}</view>
+    </view>
+
+    <!-- 语音转写对话 -->
+    <view class="transcript-card" wx:if="{{transcript}}">
+      <view class="summary-title">完整对话记录</view>
+      <view class="transcript-content">{{transcript}}</view>
+    </view>
+
+    <!-- 无数据提示 -->
+    <view class="empty-tip" wx:if="{{!diagnosis && !medicine && !advice && !followUp && !transcript}}">
+      <text>暂无详细数据，AI 分析可能仍在进行中</text>
+    </view>
+
+    <!-- 家人语音播报按钮 -->
+    <button
+      class="voice-btn {{voiceState === 'loading' ? 'loading' : ''}}"
+      disabled="{{voiceState !== 'idle'}}"
+      bindtap="playVoiceBroadcast"
+    >{{voiceBtnText}}</button>
+  </block>
+</view>

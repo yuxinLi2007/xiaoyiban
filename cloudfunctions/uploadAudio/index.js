@@ -4,59 +4,69 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 
 /**
- * uploadAudio 云函数
- * 接收音频文件存云存储，并写入数据库记录
+ * uploadAudio 云函数 — 对齐《小医陪-接口协议V1.0》
+ * 
+ * 入参：
+ *   event.fileID  — 必填，云存储中的音频文件ID（前端/ESP32上传后拿到的）
+ *   event.format — 可选，音频格式，默认 "m4a"
+ *   event.userId — 必填，老人的 _id（elders集合中的_id）
  *
- * 调用参数:
- *   event.fileContent  - Base64 编码的音频文件内容
- *   event.fileName     - 文件名（如 recording.mp3）
- *   event.format       - 音频格式（如 mp3/wav/pcm），默认 mp3
- *   event.duration     - 录音时长（秒），可选
- *   event.userId       - 用户标识，可选（不传则用 openid）
+ * 出参（成功）：
+ *   { code: 0, data: { fileID, recordId } }
+ *
+ * 出参（失败）：
+ *   { code: -1, errMsg: "错误描述" }
  */
-exports.main = async (event, context) => {
-  const { fileContent, fileName, format = "mp3", duration, userId } = event;
-  const wxContext = cloud.getWXContext();
-  const openid = userId || wxContext.OPENID;
+exports.main = async (event) => {
+  const { fileID, format = "m4a", userId } = event;
 
-  if (!fileContent || !fileName) {
-    return { success: false, errMsg: "fileContent 和 fileName 为必填参数" };
+  // --- 1. 参数校验 ---
+  if (!fileID || !userId) {
+    return {
+      code: -1,
+      errMsg: "缺少必填参数：fileID 或 userId"
+    };
+  }
+
+  // 可选：校验格式是否合法
+  const allowedFormats = ["mp3", "m4a", "wav", "pcm"];
+  if (!allowedFormats.includes(format)) {
+    return {
+      code: -1,
+      errMsg: `不支持的音频格式：${format}，支持：${allowedFormats.join(", ")}`
+    };
   }
 
   try {
-    // Base64 解码为 Buffer
-    const buffer = Buffer.from(fileContent, "base64");
-
-    // 生成云存储路径: audio/{openid}/{timestamp}_{fileName}
-    const timestamp = Date.now();
-    const cloudPath = `audio/${openid}/${timestamp}_${fileName}`;
-
-    // 上传到云存储
-    const uploadResult = await cloud.uploadFile({
-      cloudPath,
-      fileContent: buffer,
+    // --- 2. 在 records 集合创建就诊记录 ---
+    const result = await db.collection("records").add({
+      data: {
+        userId: userId,           // 关联老人ID
+        audioFileID: fileID,      // 云存储文件ID
+        format: format,           // 音频格式
+        date: db.serverDate(),    // 服务器时间
+        isNew: true,              // 新记录，子女端显示未读
+        transcript: "",           // 待 callXunfei 回填
+        diagnosis: "",
+        medicine: "",
+        followUp: "",
+        advice: ""
+      }
     });
 
-    // 写入数据库记录
-    const record = {
-      openid,
-      fileID: uploadResult.fileID,
-      cloudPath,
-      fileName,
-      format,
-      duration: duration || 0,
-      createdAt: db.serverDate(),
-    };
-
-    const dbResult = await db.collection("audios").add({ data: record });
-
+    // --- 3. 按协议返回 ---
     return {
-      success: true,
-      fileID: uploadResult.fileID,
-      recordId: dbResult._id,
-      cloudPath,
+      code: 0,
+      data: {
+        fileID: fileID,
+        recordId: result._id    // 新增记录的_id，可传给callXunfei
+      }
     };
+
   } catch (err) {
-    return { success: false, errMsg: err.message || err };
+    return {
+      code: -1,
+      errMsg: err.message || "uploadAudio 执行失败"
+    };
   }
 };

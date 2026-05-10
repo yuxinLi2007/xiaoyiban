@@ -1,0 +1,33 @@
+<!-- pages/record/record.wxml -->
+<view class="page">
+  <view class="title">📋 就诊录音</view>
+
+  <!-- 巨大录音按钮（展示产品完整形态） -->
+  <view class="record-btn {{isRecording ? 'active' : ''}}" bindtap="toggleRecord">
+    <text>{{buttonText}}</text>
+  </view>
+
+  <!-- 提示文字 -->
+  <view class="tip" wx:if="{{!isRecording}}">
+    录音时请尽量靠近手机讲话
+  </view>
+
+  <!-- 底部操作按钮组 -->
+  <view class="bottom-btns" wx:if="{{audioPath}}">
+    <button class="btn-secondary" bindtap="playAudio">播放录音</button>
+    <button class="btn-primary" bindtap="finishRecord">完成录音</button>
+  </view>
+
+  <!-- 分隔线 -->
+  <view style="width: 80%; height: 1px; background: #e8e8e8; margin: 40rpx auto;"></view>
+
+  <!-- 演示模式按钮：路演专用 -->
+  <view wx:if="{{debugMode}}" style="text-align: center; margin-top: 30rpx;">
+    <button
+      style="width: 80%; background-color: #1A9E75; color: white; font-size: 36rpx; border-radius: 40px; padding: 24rpx; margin-bottom: 20rpx;"
+      bindtap="simulateVisit">
+      📋 模拟就诊
+    </button>
+    <text style="font-size: 24rpx; color: #999;">点击后自动生成一份就诊记录</text>
+  </view>
+</view>
